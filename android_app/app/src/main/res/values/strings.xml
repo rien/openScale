@@ -429,6 +429,10 @@
     <string name="mi_algorithm_bodymiscale_science">Scientific</string>
     <string name="mi_algorithm_description">Choose how body composition is derived from impedance. \"Xiaomi\" reproduces the original Mi Fit / Zepp Life app. \"Scientific\" uses peer-reviewed formulas (Siri, Pace, Wang, Schofield) and also reports protein and BMR. Applies to new measurements from this scale.</string>
 
+    <!-- Robi S9 configuration -->
+    <string name="robi_heart_rate_label">Measure heart rate</string>
+    <string name="robi_heart_rate_description">When off, the scale skips the heart rate phase and shows the result a few seconds after the weight is stable. Applies to the next weigh-in.</string>
+
     <!-- S400 Scale Configuration -->
     <string name="s400_bind_key_label">BLE Bind Key</string>
     <string name="s400_bind_key_placeholder">32-character hex key</string>

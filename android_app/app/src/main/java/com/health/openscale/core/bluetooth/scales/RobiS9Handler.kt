@@ -24,6 +24,20 @@
  */
 package com.health.openscale.core.bluetooth.scales
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.health.openscale.R
 import com.health.openscale.core.data.MeasurementType
 import com.health.openscale.core.bluetooth.data.ScaleMeasurement
@@ -77,6 +91,35 @@ class RobiS9Handler : ScaleDeviceHandler() {
     private var waitForStepOn = false
     private var lastWeightKg = 0f
     private var profileFallbackJob: Job? = null
+
+    private val SETTINGS_KEY_HEART_RATE = "heart_rate"
+
+    private fun heartRateEnabled(): Boolean = settingsGetInt(SETTINGS_KEY_HEART_RATE, 1) != 0
+
+    @Composable
+    override fun DeviceConfigurationUi() {
+        var enabled by remember { mutableStateOf(heartRateEnabled()) }
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.robi_heart_rate_label),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                Text(
+                    text = stringResource(R.string.robi_heart_rate_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Switch(
+                checked = enabled,
+                onCheckedChange = {
+                    enabled = it
+                    settingsPutInt(SETTINGS_KEY_HEART_RATE, if (it) 1 else 0)
+                },
+            )
+        }
+    }
 
     override fun supportFor(device: ScannedDeviceInfo): DeviceSupport? {
         val name = device.name.lowercase(Locale.ROOT)
@@ -256,6 +299,7 @@ class RobiS9Handler : ScaleDeviceHandler() {
             lastWeightKg = lastWeightKg,
             male = user.gender.isMale(),
             age = user.age.coerceIn(0, 0x7F),
+            heartRate = heartRateEnabled(),
         )
         val nowMillis = System.currentTimeMillis()
         val offsetMinutes = TimeZone.getDefault().getOffset(nowMillis) / 60000
